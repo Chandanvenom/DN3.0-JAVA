@@ -1,0 +1,136 @@
+Step 1: Add Spring AOP Dependency
+Update the pom.xml file to include the Spring AOP dependency. Add the following dependency to your <dependencies> section:
+
+xml
+
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-aspect</artifactId>
+    <version>5.3.23</version>
+</dependency>
+This dependency is needed for using Spring AOP features.
+
+Step 2: Create an Aspect for Logging
+Create the Aspect Class:
+
+Create a package com.library.aspect and add a class LoggingAspect for logging method execution times.
+
+In src/main/java/com/library/aspect/LoggingAspect.java:
+
+java
+
+package com.library.aspect;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class LoggingAspect {
+    private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
+
+    @Pointcut("execution(* com.library.service.*.*(..))")
+    public void serviceMethods() {}
+
+    @Around("serviceMethods()")
+    public Object logExecutionTime(JoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+        Object proceed = joinPoint.proceed();
+        long executionTime = System.currentTimeMillis() - start;
+
+        logger.info("{} executed in {} ms", joinPoint.getSignature(), executionTime);
+        return proceed;
+    }
+}
+In this aspect:
+
+@Aspect marks the class as an aspect.
+@Component allows Spring to detect and register the aspect as a bean.
+@Pointcut defines the pointcut expression to match methods in the com.library.service package.
+@Around defines an advice that logs method execution time.
+Add SLF4J Dependency:
+
+Ensure that you have the SLF4J and Logback dependencies for logging in your pom.xml:
+
+xml
+
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+    <version>1.7.36</version>
+</dependency>
+<dependency>
+    <groupId>ch.qos.logback</groupId>
+    <artifactId>logback-classic</artifactId>
+    <version>1.2.11</version>
+</dependency>
+Step 3: Enable AspectJ Support
+Update XML Configuration:
+
+Update applicationContext.xml to enable AspectJ support and register the aspect.
+
+xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- Define the BookRepository bean -->
+    <bean id="bookRepository" class="com.library.repository.BookRepository">
+    </bean>
+
+    <!-- Define the BookService bean with dependency injection -->
+    <bean id="bookService" class="com.library.service.BookService">
+        <property name="bookRepository" ref="bookRepository"/>
+    </bean>
+
+    <!-- Enable AspectJ auto-proxy support -->
+    <aop:aspectj-autoproxy/>
+
+    <!-- Define the LoggingAspect bean -->
+    <bean id="loggingAspect" class="com.library.aspect.LoggingAspect">
+    </bean>
+
+</beans>
+The <aop:aspectj-autoproxy/> tag enables Spring’s AspectJ auto-proxying capabilities.
+
+Step 4: Test the Aspect
+Run the LibraryManagementApp main class and observe the console output for logging messages indicating method execution times.
+
+Here is the LibraryManagementApp class again for reference:
+
+java
+
+package com.library;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.library.service.BookService;
+
+public class LibraryManagementApp {
+    public static void main(String[] args) {
+        // Load the Spring context
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+        // Retrieve the BookService bean
+        BookService bookService = (BookService) context.getBean("bookService");
+
+        // Test the BookService method
+        System.out.println(bookService.getBook(1)); // Should output: Book with ID: 1
+    }
+}
+Summary
+Dependencies: Added Spring AOP and SLF4J dependencies to pom.xml.
+Aspect Creation: Created LoggingAspect to log method execution times.
+Configuration: Updated applicationContext.xml to enable AspectJ support and register the aspect.
+Testing: Ran the main application class to verify logging functionality.

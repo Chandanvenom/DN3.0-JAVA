@@ -1,0 +1,209 @@
+Step 1: Create a Spring Boot Project
+Use Spring Initializr:
+
+Visit Spring Initializr.
+Select the following options:
+Project: Maven Project
+Language: Java
+Spring Boot: (Choose the latest stable version)
+Group: com.library
+Artifact: LibraryManagement
+Name: LibraryManagement
+Description: A Spring Boot application for managing a library.
+Packaging: Jar
+Java: 11 or later
+Add Dependencies:
+
+Spring Web
+Spring Data JPA
+H2 Database
+Click Generate to download the project zip file. Unzip the file and open it in your IDE.
+
+Step 2: Create Application Properties
+Configure Database Connection:
+
+Open src/main/resources/application.properties and add the following configuration:
+
+properties
+Copy code
+# H2 Database Configuration
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+
+# Logging Configuration
+logging.level.org.springframework.web=DEBUG
+spring.datasource.url: Configures the in-memory H2 database URL.
+spring.datasource.username and spring.datasource.password: Set the database credentials.
+spring.jpa.database-platform: Configures the Hibernate dialect for H2.
+spring.h2.console.enabled: Enables the H2 console for database access via a web browser.
+Step 3: Define Entities and Repositories
+Create the Book Entity:
+
+Create a package named com.library.model and add the Book class:
+
+java
+package com.library.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String title;
+    private String author;
+    private String isbn;
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+}
+Create the BookRepository Interface:
+
+Create a package named com.library.repository and add the BookRepository interface:
+
+java
+
+package com.library.repository;
+
+import com.library.model.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface BookRepository extends JpaRepository<Book, Long> {
+}
+Step 4: Create a REST Controller
+Create the BookController Class:
+
+Create a package named com.library.controller and add the BookController class:
+
+java
+Copy code
+package com.library.controller;
+
+import com.library.model.Book;
+import com.library.repository.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/books")
+public class BookController {
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    @GetMapping
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        Optional<Book> book = bookRepository.findById(id);
+        return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+        Book savedBook = bookRepository.save(book);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
+        if (!bookRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        book.setId(id);
+        Book updatedBook = bookRepository.save(book);
+        return ResponseEntity.ok(updatedBook);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        if (!bookRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        bookRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+}
+@RestController: Marks the class as a RESTful controller.
+@RequestMapping("/books"): Specifies the base URL for the controller.
+CRUD operations: Implemented with appropriate HTTP methods and response handling.
+Step 5: Run the Application
+Run the Spring Boot Application:
+
+Ensure you have a main class to run the application:
+
+java
+
+package com.library;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class LibraryManagementApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(LibraryManagementApplication.class, args);
+    }
+}
+@SpringBootApplication: Marks the main class of the Spring Boot application.
+Test the REST Endpoints:
+
+Start the application by running the LibraryManagementApplication class.
+
+Use a tool like Postman or curl to test the REST endpoints:
+
+GET /books - Retrieves all books.
+GET /books/{id} - Retrieves a book by ID.
+POST /books - Creates a new book.
+PUT /books/{id} - Updates a book by ID.
+DELETE /books/{id} - Deletes a book by ID.
+Access the H2 database console at http://localhost:8080/h2-console with the JDBC URL jdbc:h2:mem:testdb, username sa, and password password to view and manage the in-memory database.

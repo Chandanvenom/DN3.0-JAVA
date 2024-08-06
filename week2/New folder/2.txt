@@ -1,0 +1,88 @@
+Step 1: Modify the XML Configuration
+Update the applicationContext.xml file to wire the BookRepository bean into the BookService bean. Ensure the dependency is injected correctly through the BookService's setter method.
+
+Here's how you can modify the applicationContext.xml file:
+
+xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Define the BookRepository bean -->
+    <bean id="bookRepository" class="com.library.repository.BookRepository">
+    </bean>
+
+    <!-- Define the BookService bean with dependency injection -->
+    <bean id="bookService" class="com.library.service.BookService">
+        <property name="bookRepository" ref="bookRepository"/>
+    </bean>
+
+</beans>
+In this XML configuration:
+
+The bookRepository bean is defined.
+The bookService bean is defined with a property injection of bookRepository, referencing the bookRepository bean.
+Step 2: Update the BookService Class
+Ensure that the BookService class has a setter method for BookRepository to facilitate dependency injection.
+
+Here's the updated BookService class:
+
+java
+
+package com.library.service;
+
+import com.library.repository.BookRepository;
+
+public class BookService {
+    private BookRepository bookRepository;
+
+    // Setter for Dependency Injection
+    public void setBookRepository(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    // Example method
+    public String getBook(int id) {
+        return bookRepository.findBookById(id);
+    }
+}
+In this class:
+
+The setBookRepository method is provided to allow Spring to inject the BookRepository dependency.
+Step 3: Test the Configuration
+Create or update the main class to load the Spring context and verify that the dependency injection is working correctly.
+
+Here's the LibraryManagementApp class:
+
+java
+
+package com.library;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.library.service.BookService;
+
+public class LibraryManagementApp {
+    public static void main(String[] args) {
+        // Load the Spring context
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+        // Retrieve the BookService bean
+        BookService bookService = (BookService) context.getBean("bookService");
+
+        // Test the BookService method
+        System.out.println(bookService.getBook(1)); // Should output: Book with ID: 1
+    }
+}
+In this class:
+
+The ApplicationContext loads the applicationContext.xml configuration.
+The bookService bean is retrieved from the Spring context.
+The getBook method is called to verify that BookRepository was correctly injected into BookService.
+Summary
+XML Configuration: Updated applicationContext.xml to wire the BookRepository bean into the BookService bean.
+Service Class: Ensured the BookService class has a setter method for dependency injection.
+Testing: Verified the configuration by running the LibraryManagementApp main class.

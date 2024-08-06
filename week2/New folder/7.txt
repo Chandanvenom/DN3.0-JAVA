@@ -1,0 +1,118 @@
+Step 1: Configure Constructor Injection
+Update applicationContext.xml:
+
+Configure constructor injection for the BookService bean by specifying constructor arguments. Modify applicationContext.xml to look like this:
+
+xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Enable component scanning for the com.library package -->
+    <context:component-scan base-package="com.library"/>
+
+    <!-- Define the BookRepository bean -->
+    <bean id="bookRepository" class="com.library.repository.BookRepository"/>
+
+    <!-- Define the BookService bean with constructor injection -->
+    <bean id="bookService" class="com.library.service.BookService">
+        <constructor-arg ref="bookRepository"/>
+    </bean>
+
+</beans>
+In this configuration, BookService is initialized with BookRepository via the constructor.
+
+Step 2: Configure Setter Injection
+Ensure that BookService Class Has a Setter Method:
+
+Add a setter method for BookRepository in the BookService class:
+
+java
+
+package com.library.service;
+
+import com.library.repository.BookRepository;
+
+public class BookService {
+
+    private BookRepository bookRepository;
+
+    // Constructor for dependency injection
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    // Setter for BookRepository
+    public void setBookRepository(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    // Method to perform operations
+    public void performService() {
+        // Implementation using bookRepository
+    }
+}
+Update applicationContext.xml for Setter Injection:
+
+To configure setter injection, update the applicationContext.xml file like this:
+
+xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Enable component scanning for the com.library package -->
+    <context:component-scan base-package="com.library"/>
+
+    <!-- Define the BookRepository bean -->
+    <bean id="bookRepository" class="com.library.repository.BookRepository"/>
+
+    <!-- Define the BookService bean with constructor injection -->
+    <bean id="bookService" class="com.library.service.BookService">
+        <constructor-arg ref="bookRepository"/>
+        <!-- Optionally configure setter injection -->
+        <!-- <property name="bookRepository" ref="bookRepository"/> -->
+    </bean>
+
+</beans>
+If you want to use both constructor and setter injection, configure the BookService bean to use both methods, but usually, you would choose one method of injection to avoid confusion.
+
+Step 3: Test the Injection
+Update LibraryManagementApplication Class:
+
+Ensure that the LibraryManagementApplication class loads the Spring context and verifies both constructor and setter injection:
+
+java
+
+package com.library;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.library.service.BookService;
+
+public class LibraryManagementApplication {
+
+    public static void main(String[] args) {
+        // Load the Spring context from the XML configuration file
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+        // Retrieve the BookService bean
+        BookService bookService = (BookService) context.getBean("bookService");
+
+        // Call a method on the BookService bean
+        bookService.performService();
+
+        // Optionally, close the context if needed
+        ((ClassPathXmlApplicationContext) context).close();
+    }
+}
+Summary
+Configure Constructor Injection: Update applicationContext.xml to use constructor injection for BookService.
+Configure Setter Injection: Ensure BookService has a setter method and configure it in applicationContext.xml.
+Test Injection: Verify both constructor and setter injection by running the LibraryManagementApplication main class.

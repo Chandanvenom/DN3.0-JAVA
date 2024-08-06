@@ -1,0 +1,97 @@
+Scenario 1: Apply Discount to Loan Interest Rates for Customers Above 60 Years Old
+plsql
+
+DECLARE
+    CURSOR customer_cursor IS
+        SELECT customer_id, age, loan_interest_rate
+        FROM customers
+        WHERE age > 60;
+    
+    v_customer_id customers.customer_id%TYPE;
+    v_age customers.age%TYPE;
+    v_loan_interest_rate customers.loan_interest_rate%TYPE;
+BEGIN
+    OPEN customer_cursor;
+    LOOP
+        FETCH customer_cursor INTO v_customer_id, v_age, v_loan_interest_rate;
+        EXIT WHEN customer_cursor%NOTFOUND;
+
+        -- Apply a 1% discount to the current loan interest rate
+        UPDATE customers
+        SET loan_interest_rate = v_loan_interest_rate * 0.99
+        WHERE customer_id = v_customer_id;
+
+        COMMIT;
+    END LOOP;
+    CLOSE customer_cursor;
+END;
+/
+Scenario 2: Promote Customers to VIP Status Based on Their Balance
+plsql
+
+DECLARE
+    CURSOR customer_cursor IS
+        SELECT customer_id, balance
+        FROM customers
+        WHERE balance > 10000;
+    
+    v_customer_id customers.customer_id%TYPE;
+    v_balance customers.balance%TYPE;
+BEGIN
+    OPEN customer_cursor;
+    LOOP
+        FETCH customer_cursor INTO v_customer_id, v_balance;
+        EXIT WHEN customer_cursor%NOTFOUND;
+
+        -- Set the IsVIP flag to TRUE
+        UPDATE customers
+        SET IsVIP = TRUE
+        WHERE customer_id = v_customer_id;
+
+        COMMIT;
+    END LOOP;
+    CLOSE customer_cursor;
+END;
+/
+Scenario 3: Send Reminders for Loans Due in the Next 30 Days
+plsql
+
+DECLARE
+    CURSOR loan_cursor IS
+        SELECT l.loan_id, l.customer_id, l.due_date, c.name
+        FROM loans l
+        JOIN customers c ON l.customer_id = c.customer_id
+        WHERE l.due_date BETWEEN SYSDATE AND SYSDATE + 30;
+    
+    v_loan_id loans.loan_id%TYPE;
+    v_customer_id loans.customer_id%TYPE;
+    v_due_date loans.due_date%TYPE;
+    v_customer_name customers.name%TYPE;
+BEGIN
+    OPEN loan_cursor;
+    LOOP
+        FETCH loan_cursor INTO v_loan_id, v_customer_id, v_due_date, v_customer_name;
+        EXIT WHEN loan_cursor%NOTFOUND;
+
+        -- Print reminder message
+        DBMS_OUTPUT.PUT_LINE('Reminder: Dear ' || v_customer_name || ', your loan with ID ' || v_loan_id || ' is due on ' || TO_CHAR(v_due_date, 'YYYY-MM-DD') || '. Please ensure timely payment.');
+
+    END LOOP;
+    CLOSE loan_cursor;
+END;
+/
+Explanation
+Scenario 1:
+
+A cursor is defined to fetch customers older than 60 with their current loan interest rate.
+A loop iterates through each customer, applying a 1% discount to their loan interest rate and updating the record.
+The transaction is committed after each update.
+Scenario 2:
+
+A cursor is defined to fetch customers with a balance over $10,000.
+A loop iterates through each customer, setting the IsVIP flag to TRUE for qualifying customers.
+The transaction is committed after each update.
+Scenario 3:
+
+A cursor is defined to fetch loans due within the next 30 days, joining with the customer table to get customer names.
+A loop iterates through each loan, printing a reminder message for each customer whose loan is due soon.

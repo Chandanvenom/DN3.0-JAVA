@@ -1,0 +1,107 @@
+Scenario 1: Generate Monthly Statements for All Customers
+plsql
+
+DECLARE
+    CURSOR cur_transactions IS
+        SELECT customer_id, transaction_date, amount, description
+        FROM transactions
+        WHERE EXTRACT(MONTH FROM transaction_date) = EXTRACT(MONTH FROM SYSDATE)
+          AND EXTRACT(YEAR FROM transaction_date) = EXTRACT(YEAR FROM SYSDATE);
+    
+    v_customer_id customers.customer_id%TYPE;
+    v_transaction_date transactions.transaction_date%TYPE;
+    v_amount transactions.amount%TYPE;
+    v_description transactions.description%TYPE;
+BEGIN
+    OPEN cur_transactions;
+    
+    LOOP
+        FETCH cur_transactions INTO v_customer_id, v_transaction_date, v_amount, v_description;
+        EXIT WHEN cur_transactions%NOTFOUND;
+        
+        -- Print the statement for each transaction
+        DBMS_OUTPUT.PUT_LINE('Customer ID: ' || v_customer_id);
+        DBMS_OUTPUT.PUT_LINE('Transaction Date: ' || v_transaction_date);
+        DBMS_OUTPUT.PUT_LINE('Amount: ' || v_amount);
+        DBMS_OUTPUT.PUT_LINE('Description: ' || v_description);
+        DBMS_OUTPUT.PUT_LINE('----------------------------');
+    END LOOP;
+    
+    CLOSE cur_transactions;
+END;
+/
+Scenario 2: Apply Annual Fee to All Accounts
+plsql
+
+DECLARE
+    CURSOR cur_accounts IS
+        SELECT account_id, balance
+        FROM accounts;
+    
+    v_account_id accounts.account_id%TYPE;
+    v_balance accounts.balance%TYPE;
+    v_annual_fee NUMBER := 50;  -- Example fee amount
+BEGIN
+    OPEN cur_accounts;
+    
+    LOOP
+        FETCH cur_accounts INTO v_account_id, v_balance;
+        EXIT WHEN cur_accounts%NOTFOUND;
+        
+        -- Deduct annual fee from each account balance
+        UPDATE accounts
+        SET balance = balance - v_annual_fee
+        WHERE account_id = v_account_id;
+    END LOOP;
+    
+    CLOSE cur_accounts;
+    
+    -- Commit the changes to save the deducted fees
+    COMMIT;
+END;
+/
+Scenario 3: Update Interest Rate for All Loans
+
+DECLARE
+    CURSOR cur_loans IS
+        SELECT loan_id, current_interest_rate
+        FROM loans;
+    
+    v_loan_id loans.loan_id%TYPE;
+    v_current_interest_rate loans.current_interest_rate%TYPE;
+    v_new_interest_rate NUMBER;  -- Example new interest rate based on policy
+BEGIN
+    -- Define new interest rate according to the policy
+    v_new_interest_rate := 5;  -- Example new interest rate in percent
+    
+    OPEN cur_loans;
+    
+    LOOP
+        FETCH cur_loans INTO v_loan_id, v_current_interest_rate;
+        EXIT WHEN cur_loans%NOTFOUND;
+        
+        -- Update the interest rate for each loan
+        UPDATE loans
+        SET current_interest_rate = v_new_interest_rate
+        WHERE loan_id = v_loan_id;
+    END LOOP;
+    
+    CLOSE cur_loans;
+    
+    -- Commit the changes to save the updated interest rates
+    COMMIT;
+END;
+/
+Explanation
+Scenario 1: GenerateMonthlyStatements
+
+Cursor: cur_transactions retrieves all transactions for the current month.
+Logic: Fetches each transaction and prints the details using DBMS_OUTPUT.PUT_LINE.
+Scenario 2: ApplyAnnualFee
+
+Cursor: cur_accounts retrieves all account details.
+Logic: Deducts an annual fee from the balance of each account. The changes are committed after processing all accounts.
+Scenario 3: UpdateLoanInterestRates
+
+Cursor: cur_loans retrieves all loan details.
+Logic: Updates the interest rate for all loans based on the new policy. The changes are committed after updating all loans.

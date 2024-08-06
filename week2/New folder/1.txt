@@ -1,0 +1,137 @@
+Step 1: Set Up a Spring Project
+Create a Maven Project:
+
+Use your IDE (e.g., IntelliJ IDEA, Eclipse) to create a new Maven project named LibraryManagement.
+Ensure you have Maven and JDK installed.
+Add Spring Core Dependencies:
+
+Update your pom.xml file to include the necessary Spring Core dependencies. Here's an example of what your pom.xml might look like:
+
+xml
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.library</groupId>
+    <artifactId>LibraryManagement</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+        <!-- Spring Core -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>5.3.23</version>
+        </dependency>
+        <!-- Spring Context -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>5.3.23</version>
+        </dependency>
+        <!-- Spring Beans -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>5.3.23</version>
+        </dependency>
+        <!-- Optional: Add logging dependencies if needed -->
+    </dependencies>
+</project>
+Step 2: Configure the Application Context
+Create an XML Configuration File:
+
+Create applicationContext.xml in the src/main/resources directory with the following content:
+
+xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Define the BookRepository bean -->
+    <bean id="bookRepository" class="com.library.repository.BookRepository">
+    </bean>
+
+    <!-- Define the BookService bean -->
+    <bean id="bookService" class="com.library.service.BookService">
+        <property name="bookRepository" ref="bookRepository"/>
+    </bean>
+
+</beans>
+Step 3: Define Service and Repository Classes
+Create the BookRepository Class:
+
+In src/main/java/com/library/repository/BookRepository.java:
+
+java
+
+package com.library.repository;
+
+public class BookRepository {
+    // Example method
+    public String findBookById(int id) {
+        // In a real application, this method would interact with a database
+        return "Book with ID: " + id;
+    }
+}
+Create the BookService Class:
+
+In src/main/java/com/library/service/BookService.java:
+
+java
+
+package com.library.service;
+
+import com.library.repository.BookRepository;
+
+public class BookService {
+    private BookRepository bookRepository;
+
+    // Setter for Dependency Injection
+    public void setBookRepository(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    // Example method
+    public String getBook(int id) {
+        return bookRepository.findBookById(id);
+    }
+}
+Step 4: Run the Application
+Create a Main Class to Test the Configuration:
+
+In src/main/java/com/library/LibraryManagementApp.java:
+
+java
+
+package com.library;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.library.service.BookService;
+
+public class LibraryManagementApp {
+    public static void main(String[] args) {
+        // Load the Spring context
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+        // Retrieve the BookService bean
+        BookService bookService = (BookService) context.getBean("bookService");
+
+        // Test the BookService method
+        System.out.println(bookService.getBook(1));
+    }
+}
+Run the Application:
+
+Compile and run the LibraryManagementApp class. If everything is set up correctly, it should output "Book with ID: 1".
+Summary
+Dependencies: Added Spring Core dependencies to pom.xml.
+Configuration: Defined Spring beans in applicationContext.xml.
+Classes: Created BookRepository and BookService classes with basic functionality.
+Execution: Created a main class to load the Spring context and test the setup.

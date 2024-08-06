@@ -1,0 +1,124 @@
+Scenario 1: Handle Exceptions During Fund Transfers
+plsql
+
+CREATE OR REPLACE PROCEDURE SafeTransferFunds(
+    p_from_account_id IN NUMBER,
+    p_to_account_id IN NUMBER,
+    p_amount IN NUMBER
+) IS
+    v_from_balance NUMBER;
+    v_to_balance NUMBER;
+BEGIN
+    -- Start a transaction
+    BEGIN
+        -- Get the current balance of the from account
+        SELECT balance INTO v_from_balance
+        FROM accounts
+        WHERE account_id = p_from_account_id FOR UPDATE;
+
+        -- Check if sufficient funds are available
+        IF v_from_balance < p_amount THEN
+            RAISE_APPLICATION_ERROR(-20001, 'Insufficient funds.');
+        END IF;
+
+        -- Deduct funds from the from account
+        UPDATE accounts
+        SET balance = balance - p_amount
+        WHERE account_id = p_from_account_id;
+
+        -- Add funds to the to account
+        SELECT balance INTO v_to_balance
+        FROM accounts
+        WHERE account_id = p_to_account_id FOR UPDATE;
+
+        UPDATE accounts
+        SET balance = balance + p_amount
+        WHERE account_id = p_to_account_id;
+
+        -- Commit transaction
+        COMMIT;
+    EXCEPTION
+        WHEN OTHERS THEN
+            -- Rollback transaction on error
+            ROLLBACK;
+            -- Log the error
+            DBMS_OUTPUT.PUT_LINE('Error during fund transfer: ' || SQLERRM);
+            RAISE;
+    END;
+END SafeTransferFunds;
+/
+Scenario 2: Manage Errors When Updating Employee Salaries
+plsql
+
+CREATE OR REPLACE PROCEDURE UpdateSalary(
+    p_employee_id IN NUMBER,
+    p_percentage IN NUMBER
+) IS
+    v_current_salary NUMBER;
+BEGIN
+    -- Get the current salary of the employee
+    SELECT salary INTO v_current_salary
+    FROM employees
+    WHERE employee_id = p_employee_id;
+
+    -- Update the salary
+    UPDATE employees
+    SET salary = salary + (salary * p_percentage / 100)
+    WHERE employee_id = p_employee_id;
+
+    -- Commit transaction
+    COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        -- Handle case where employee ID does not exist
+        DBMS_OUTPUT.PUT_LINE('Error: Employee ID ' || p_employee_id || ' does not exist.');
+    WHEN OTHERS THEN
+        -- Handle other potential errors
+        DBMS_OUTPUT.PUT_LINE('Error during salary update: ' || SQLERRM);
+        ROLLBACK;
+END UpdateSalary;
+/
+Scenario 3: Ensure Data Integrity When Adding a New Customer
+plsql
+
+CREATE OR REPLACE PROCEDURE AddNewCustomer(
+    p_customer_id IN NUMBER,
+    p_name IN VARCHAR2,
+    p_balance IN NUMBER
+) IS
+BEGIN
+    BEGIN
+        -- Try to insert the new customer
+        INSERT INTO customers (customer_id, name, balance)
+        VALUES (p_customer_id, p_name, p_balance);
+
+        -- Commit transaction
+        COMMIT;
+    EXCEPTION
+        WHEN DUP_VAL_ON_INDEX THEN
+            -- Handle case where customer ID already exists
+            DBMS_OUTPUT.PUT_LINE('Error: Customer ID ' || p_customer_id || ' already exists.');
+            ROLLBACK;
+        WHEN OTHERS THEN
+            -- Handle other potential errors
+            DBMS_OUTPUT.PUT_LINE('Error during customer insertion: ' || SQLERRM);
+            ROLLBACK;
+    END;
+END AddNewCustomer;
+/
+Explanation
+Scenario 1: SafeTransferFunds
+
+Checks the balance of the from account and ensures there are sufficient funds before transferring.
+Uses FOR UPDATE to lock rows while updating balances.
+Rolls back the transaction in case of errors and logs the error message.
+Scenario 2: UpdateSalary
+
+Fetches the current salary of the employee and updates it by the specified percentage.
+Handles cases where the employee ID does not exist using NO_DATA_FOUND.
+Rolls back and logs errors for other issues.
+Scenario 3: AddNewCustomer
+
+Inserts a new customer into the customers table.
+Handles cases where the customer ID already exists using DUP_VAL_ON_INDEX.
+Rolls back and logs errors for other issues.

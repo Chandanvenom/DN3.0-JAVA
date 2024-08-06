@@ -1,0 +1,98 @@
+Step 1: Enable Component Scanning
+Update applicationContext.xml:
+
+Modify the applicationContext.xml file to enable component scanning for the com.library package:
+
+xml
+Copy code
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Enable component scanning for the com.library package -->
+    <context:component-scan base-package="com.library"/>
+
+</beans>
+Make sure to include the context namespace at the top of the file:
+
+xml
+
+xmlns:context="http://www.springframework.org/schema/context"
+Step 2: Annotate Classes
+Annotate the BookService Class:
+
+Add the @Service annotation to the BookService class:
+
+java
+
+package com.library.service;
+
+import org.springframework.stereotype.Service;
+import com.library.repository.BookRepository;
+
+@Service
+public class BookService {
+
+    private BookRepository bookRepository;
+
+    // Constructor for dependency injection
+    @Autowired
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    // Method to perform operations
+    public void performService() {
+        // Implementation using bookRepository
+    }
+}
+Annotate the BookRepository Class:
+
+Add the @Repository annotation to the BookRepository class:
+
+java
+
+package com.library.repository;
+
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class BookRepository {
+
+    // Methods to interact with the data source
+    public void saveBook() {
+        // Implementation to save book
+    }
+}
+Step 3: Test the Configuration
+Update LibraryManagementApplication Class:
+
+Ensure that the LibraryManagementApplication class loads the Spring context and verifies the annotation-based configuration:
+
+java
+
+package com.library;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import com.library.service.BookService;
+
+public class LibraryManagementApplication {
+
+    public static void main(String[] args) {
+        // Load the Spring context from the annotation-based configuration
+        ApplicationContext context = new AnnotationConfigApplicationContext("com.library");
+
+        // Retrieve the BookService bean
+        BookService bookService = context.getBean(BookService.class);
+
+        // Call a method on the BookService bean
+        bookService.performService();
+
+        // Optionally, close the context if needed
+        ((AnnotationConfigApplicationContext) context).close();
+    }
+}
+Note that with annotation-based configuration, you use AnnotationConfigApplicationContext and specify the base package for component scanning directly in the main method.

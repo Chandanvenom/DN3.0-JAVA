@@ -1,0 +1,97 @@
+Step 1: Create Spring Configuration File
+Create applicationContext.xml File:
+
+Navigate to src/main/resources in your Maven project.
+Create a new XML file named applicationContext.xml.
+Define Beans for BookService and BookRepository:
+
+Here's an example of how to define the beans in applicationContext.xml:
+
+xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Define the BookRepository bean -->
+    <bean id="bookRepository" class="com.library.repository.BookRepository">
+        <!-- Configure any properties or constructor arguments if needed -->
+    </bean>
+
+    <!-- Define the BookService bean and inject the BookRepository bean -->
+    <bean id="bookService" class="com.library.service.BookService">
+        <property name="bookRepository" ref="bookRepository"/>
+    </bean>
+
+</beans>
+Step 2: Update the BookService Class
+Ensure that the BookService class has a setter method for BookRepository:
+
+Create BookService Class:
+
+java
+
+package com.library.service;
+
+import com.library.repository.BookRepository;
+
+public class BookService {
+
+    private BookRepository bookRepository;
+
+    // Setter for BookRepository
+    public void setBookRepository(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    // Method to perform operations
+    public void performService() {
+        // Implementation using bookRepository
+    }
+}
+Create BookRepository Class:
+
+java
+
+package com.library.repository;
+
+public class BookRepository {
+
+    // Methods to interact with the data source
+    public void saveBook() {
+        // Implementation to save book
+    }
+}
+Step 3: Run the Application
+Create a Main Class to Load the Spring Context and Test the Configuration:
+
+java
+
+package com.library;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import com.library.service.BookService;
+
+public class LibraryManagementApplication {
+
+    public static void main(String[] args) {
+        // Load the Spring context from the XML configuration file
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+        // Retrieve the BookService bean
+        BookService bookService = (BookService) context.getBean("bookService");
+
+        // Call a method on the BookService bean
+        bookService.performService();
+
+        // Optionally, close the context
+        ((ClassPathXmlApplicationContext) context).close();
+    }
+}
+Summary
+Create applicationContext.xml: Define beans for BookService and BookRepository.
+Update BookService Class: Ensure it has a setter for BookRepository.
+Run the Application: Create a main class to load the Spring context and test the bean configuration.

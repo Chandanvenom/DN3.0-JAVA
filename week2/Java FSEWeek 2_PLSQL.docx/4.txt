@@ -1,0 +1,73 @@
+Scenario 1: Calculate Age of Customers
+plsql
+
+CREATE OR REPLACE FUNCTION CalculateAge(p_date_of_birth DATE) RETURN NUMBER IS
+    v_age NUMBER;
+BEGIN
+    -- Calculate age based on the date of birth
+    v_age := FLOOR(MONTHS_BETWEEN(SYSDATE, p_date_of_birth) / 12);
+    RETURN v_age;
+END CalculateAge;
+/
+Scenario 2: Compute Monthly Installment for a Loan
+plsql
+
+CREATE OR REPLACE FUNCTION CalculateMonthlyInstallment(
+    p_loan_amount NUMBER,
+    p_annual_interest_rate NUMBER,
+    p_loan_duration_years NUMBER
+) RETURN NUMBER IS
+    v_monthly_installment NUMBER;
+    v_monthly_interest_rate NUMBER;
+    v_number_of_payments NUMBER;
+BEGIN
+    -- Calculate monthly interest rate and number of payments
+    v_monthly_interest_rate := p_annual_interest_rate / 12 / 100;
+    v_number_of_payments := p_loan_duration_years * 12;
+
+    -- Calculate monthly installment using the formula
+    IF v_monthly_interest_rate = 0 THEN
+        v_monthly_installment := p_loan_amount / v_number_of_payments;
+    ELSE
+        v_monthly_installment := p_loan_amount * (v_monthly_interest_rate * POWER(1 + v_monthly_interest_rate, v_number_of_payments)) /
+                                  (POWER(1 + v_monthly_interest_rate, v_number_of_payments) - 1);
+    END IF;
+
+    RETURN v_monthly_installment;
+END CalculateMonthlyInstallment;
+/
+Scenario 3: Check if a Customer Has Sufficient Balance
+plsql
+
+CREATE OR REPLACE FUNCTION HasSufficientBalance(
+    p_account_id NUMBER,
+    p_amount NUMBER
+) RETURN BOOLEAN IS
+    v_balance NUMBER;
+BEGIN
+    -- Get the current balance of the account
+    SELECT balance INTO v_balance
+    FROM accounts
+    WHERE account_id = p_account_id;
+
+    -- Check if the balance is sufficient
+    RETURN v_balance >= p_amount;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        -- Account does not exist
+        RETURN FALSE;
+END HasSufficientBalance;
+/
+Explanation
+Scenario 1: CalculateAge
+
+Purpose: Computes the age of a customer based on their date of birth.
+Logic: Uses MONTHS_BETWEEN to calculate the total months between the current date and the date of birth, then divides by 12 to get the age in years.
+Scenario 2: CalculateMonthlyInstallment
+
+Purpose: Calculates the monthly installment amount for a loan based on the amount, annual interest rate, and duration.
+Logic: Computes the monthly interest rate and number of payments. Uses the formula for calculating the monthly installment. Handles the case where the interest rate is 0 to avoid division by zero.
+Scenario 3: HasSufficientBalance
+
+Purpose: Checks if a given account has sufficient balance to cover a specified amount.
+Logic: Queries the account balance and compares it with the required amount. Returns FALSE if the account does not exist or has insufficient funds.

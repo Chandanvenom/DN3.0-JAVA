@@ -1,0 +1,64 @@
+Scenario 1: Automatically Update LastModified Date on Customer Record Update
+plsql
+
+CREATE OR REPLACE TRIGGER UpdateCustomerLastModified
+BEFORE UPDATE ON customers
+FOR EACH ROW
+BEGIN
+    -- Set LastModified to the current date before the record is updated
+    :NEW.LastModified := SYSDATE;
+END UpdateCustomerLastModified;
+/
+Scenario 2: Maintain an Audit Log for All Transactions
+plsql
+
+CREATE OR REPLACE TRIGGER LogTransaction
+AFTER INSERT ON transactions
+FOR EACH ROW
+BEGIN
+    -- Insert a record into the AuditLog table whenever a transaction is inserted
+    INSERT INTO audit_log (transaction_id, action, action_date)
+    VALUES (:NEW.transaction_id, 'INSERT', SYSDATE);
+END LogTransaction;
+/
+Scenario 3: Enforce Business Rules on Deposits and Withdrawals
+plsql
+
+CREATE OR REPLACE TRIGGER CheckTransactionRules
+BEFORE INSERT ON transactions
+FOR EACH ROW
+DECLARE
+    v_balance NUMBER;
+BEGIN
+    -- Ensure deposits are positive
+    IF :NEW.transaction_type = 'Deposit' AND :NEW.amount <= 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Deposit amount must be positive.');
+    END IF;
+
+    -- Ensure withdrawals do not exceed balance
+    IF :NEW.transaction_type = 'Withdrawal' THEN
+        SELECT balance INTO v_balance
+        FROM accounts
+        WHERE account_id = :NEW.account_id;
+
+        IF v_balance < :NEW.amount THEN
+            RAISE_APPLICATION_ERROR(-20002, 'Insufficient balance for withdrawal.');
+        END IF;
+    END IF;
+END CheckTransactionRules;
+/
+Explanation
+Scenario 1: UpdateCustomerLastModified
+
+Trigger Type: BEFORE UPDATE
+Purpose: Automatically updates the LastModified column to the current date whenever a record in the customers table is updated.
+Scenario 2: LogTransaction
+
+Trigger Type: AFTER INSERT
+Purpose: Inserts a record into the audit_log table every time a new record is inserted into the transactions table. This helps maintain an audit trail of all transactions.
+Scenario 3: CheckTransactionRules
+
+Trigger Type: BEFORE INSERT
+Purpose: Enforces business rules before a transaction record is inserted into the transactions table:
+Ensures that deposit amounts are positive.
+Ensures that withdrawals do not exceed the available balance in the account.

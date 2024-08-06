@@ -1,0 +1,115 @@
+Step 1: Create a New Maven Project
+Using IDE (e.g., IntelliJ IDEA, Eclipse):
+
+Open your IDE and select File > New > Project.
+Choose Maven as the project type and click Next.
+Enter LibraryManagement as the project name and select a suitable location for the project.
+Click Finish to create the project.
+Using Command Line:
+
+Open a terminal or command prompt.
+
+Navigate to the directory where you want to create the project.
+
+Run the following command to create a new Maven project:
+
+bash
+
+mvn archetype:generate -DgroupId=com.library -DartifactId=LibraryManagement -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+This command generates a new Maven project with a basic setup.
+
+Step 2: Add Spring Dependencies in pom.xml
+Update the pom.xml file located in the root of your Maven project to include the necessary Spring dependencies:
+
+xml
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/POM/4.0.0">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.library</groupId>
+    <artifactId>LibraryManagement</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>LibraryManagement</name>
+    <url>http://maven.apache.org</url>
+
+    <dependencies>
+        <!-- Spring Context Dependency -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>5.3.23</version>
+        </dependency>
+
+        <!-- Spring AOP Dependency -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspect</artifactId>
+            <version>5.3.23</version>
+        </dependency>
+
+        <!-- Spring WebMVC Dependency -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>5.3.23</version>
+        </dependency>
+
+        <!-- SLF4J API Dependency (for logging) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+        </dependency>
+
+        <!-- Logback Dependency (SLF4J implementation) -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.11</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Maven Compiler Plugin for Java version 1.8 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+Step 3: Configure Maven Plugins
+In the pom.xml file, configure the Maven Compiler Plugin to use Java version 1.8:
+
+xml
+
+<build>
+    <plugins>
+        <!-- Maven Compiler Plugin for Java version 1.8 -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.1</version>
+            <configuration>
+                <source>1.8</source>
+                <target>1.8</target>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+Summary
+Create Maven Project: Set up a new Maven project named LibraryManagement.
+Add Spring Dependencies: Include dependencies for Spring Context, Spring AOP, and Spring WebMVC in pom.xml.
+Configure Maven Plugins: Set up the Maven Compiler Plugin to use Java version 1.8.
