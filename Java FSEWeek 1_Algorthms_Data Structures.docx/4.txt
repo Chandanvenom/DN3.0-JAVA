@@ -1,0 +1,191 @@
+Employee Management System: Exercise 4
+1. Understand Array Representation:
+How Arrays are Represented in Memory:
+
+Contiguous Memory Allocation: Arrays are stored in contiguous memory locations. Each element is placed next to the previous element, which allows for efficient indexing.
+Index-Based Access: Arrays use indices to access elements. This provides constant-time access to elements (O(1)) because the index can directly map to a memory address using the base address and the index offset.
+Fixed Size: Arrays have a fixed size, meaning that once created, their size cannot be changed. If you need more elements, a new array must be created and the old elements copied to the new array.
+Advantages: Arrays offer efficient indexing and iteration, low memory overhead, and predictable performance for accessing elements.
+Advantages of Arrays:
+
+Fast Access: Direct access to elements using indices, which provides constant-time retrieval.
+Simple Structure: Easy to implement and use for basic data storage.
+Memory Efficiency: Minimal overhead as only the data and indices are stored.
+2. Setup:
+Create an Employee class with attributes such as employeeId, name, position, and salary.
+
+Employee Class Definition:
+
+java
+
+public class Employee {
+    private String employeeId;
+    private String name;
+    private String position;
+    private double salary;
+
+    // Constructor
+    public Employee(String employeeId, String name, String position, double salary) {
+        this.employeeId = employeeId;
+        this.name = name;
+        this.position = position;
+        this.salary = salary;
+    }
+
+    // Getters and Setters
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "employeeId='" + employeeId + '\'' +
+                ", name='" + name + '\'' +
+                ", position='" + position + '\'' +
+                ", salary=" + salary +
+                '}';
+    }
+}
+3. Implementation:
+Employee Management Using an Array:
+
+java
+
+public class EmployeeManagementSystem {
+    private Employee[] employees;
+    private int size;
+
+    // Constructor
+    public EmployeeManagementSystem(int capacity) {
+        employees = new Employee[capacity];
+        size = 0;
+    }
+
+    // Add an employee
+    public void addEmployee(Employee employee) {
+        if (size < employees.length) {
+            employees[size++] = employee;
+        } else {
+            System.out.println("Array is full. Cannot add more employees.");
+        }
+    }
+
+    // Search for an employee by employeeId
+    public Employee searchEmployee(String employeeId) {
+        for (int i = 0; i < size; i++) {
+            if (employees[i].getEmployeeId().equals(employeeId)) {
+                return employees[i];
+            }
+        }
+        return null; // Not found
+    }
+
+    // Traverse and print all employees
+    public void traverseEmployees() {
+        for (int i = 0; i < size; i++) {
+            System.out.println(employees[i]);
+        }
+    }
+
+    // Delete an employee by employeeId
+    public void deleteEmployee(String employeeId) {
+        for (int i = 0; i < size; i++) {
+            if (employees[i].getEmployeeId().equals(employeeId)) {
+                // Shift elements to the left
+                for (int j = i; j < size - 1; j++) {
+                    employees[j] = employees[j + 1];
+                }
+                employees[size - 1] = null; // Nullify the last element
+                size--;
+                return;
+            }
+        }
+        System.out.println("Employee with ID " + employeeId + " not found.");
+    }
+
+    public static void main(String[] args) {
+        EmployeeManagementSystem ems = new EmployeeManagementSystem(10);
+
+        // Add employees
+        ems.addEmployee(new Employee("1", "Alice", "Engineer", 75000));
+        ems.addEmployee(new Employee("2", "Bob", "Manager", 85000));
+
+        // Traverse employees
+        System.out.println("All Employees:");
+        ems.traverseEmployees();
+
+        // Search for an employee
+        System.out.println("Searching for Employee with ID 1:");
+        Employee emp = ems.searchEmployee("1");
+        if (emp != null) {
+            System.out.println(emp);
+        } else {
+            System.out.println("Employee not found.");
+        }
+
+        // Delete an employee
+        System.out.println("Deleting Employee with ID 2.");
+        ems.deleteEmployee("2");
+
+        // Traverse employees after deletion
+        System.out.println("All Employees after deletion:");
+        ems.traverseEmployees();
+    }
+}
+4. Analysis:
+Time Complexity of Operations:
+
+Add Operation:
+
+Time Complexity: O(1) – Adding an employee is a constant-time operation, provided there is space in the array.
+Space Complexity: O(1) – Only the size of the new employee object.
+Search Operation:
+
+Time Complexity: O(n) – In the worst case, each element must be checked.
+Space Complexity: O(1) – Only the search operation uses constant space.
+Traverse Operation:
+
+Time Complexity: O(n) – Each element must be visited once.
+Space Complexity: O(1) – The traversal itself uses constant additional space.
+Delete Operation:
+
+Time Complexity: O(n) – Finding the element takes O(n), and shifting the remaining elements to fill the gap also takes O(n) in the worst case.
+Space Complexity: O(1) – Only the deletion operation uses constant space.
+Limitations of Arrays and When to Use Them:
+
+Fixed Size: Arrays have a fixed size, so resizing requires creating a new array and copying elements. This is inefficient compared to dynamic data structures like ArrayList or LinkedList.
+Insertion and Deletion Costs: Inserting or deleting elements involves shifting elements, which can be costly for large arrays.
+Memory Management: If the maximum number of employees is not known, arrays might lead to wasted space or insufficient space.
+When to Use Arrays:
+
+Small or Fixed-Size Data: Arrays are suitable when the number of elements is known ahead of time and the size is not expected to change frequently.
+Simple Use Cases: For simple scenarios where the overhead of more complex data structures is not justified, arrays are a straightforward choice.

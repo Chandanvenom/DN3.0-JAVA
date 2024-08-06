@@ -1,0 +1,144 @@
+Sorting Customer Orders: Exercise 3
+1. Understand Sorting Algorithms:
+Bubble Sort:
+
+Description: Bubble Sort is a simple comparison-based algorithm where adjacent elements are compared and swapped if they are in the wrong order. This process is repeated until the entire list is sorted.
+Time Complexity:
+Best Case: O(n) – If the list is already sorted, with an optimized version.
+Average Case: O(n^2) – The algorithm needs to perform multiple passes through the list.
+Worst Case: O(n^2) – The list is in reverse order.
+Insertion Sort:
+
+Description: Insertion Sort builds the final sorted array one item at a time. It picks each item from the input data and inserts it into the correct position in the already sorted part of the array.
+Time Complexity:
+Best Case: O(n) – If the list is already sorted.
+Average Case: O(n^2) – For randomly ordered data.
+Worst Case: O(n^2) – If the list is in reverse order.
+Quick Sort:
+
+Description: Quick Sort is a divide-and-conquer algorithm. It selects a 'pivot' element and partitions the array into two sub-arrays according to whether elements are less than or greater than the pivot. The sub-arrays are then sorted recursively.
+Time Complexity:
+Best Case: O(n log n) – When the pivot divides the array into two roughly equal parts.
+Average Case: O(n log n) – On average, the pivot is near the median.
+Worst Case: O(n^2) – When the pivot is the smallest or largest element, causing unbalanced partitions.
+Merge Sort:
+
+Description: Merge Sort is also a divide-and-conquer algorithm. It divides the array into halves, sorts each half, and then merges the sorted halves back together.
+Time Complexity:
+Best Case: O(n log n) – Consistent time complexity due to the divide-and-conquer approach.
+Average Case: O(n log n) – The array is always divided into equal halves.
+Worst Case: O(n log n) – The merging step requires linear time.
+2. Setup:
+Create a Order class with attributes such as orderId, customerName, and totalPrice.
+
+Order Class Definition:
+
+java
+
+public class Order {
+    private String orderId;
+    private String customerName;
+    private double totalPrice;
+
+    // Constructor
+    public Order(String orderId, String customerName, double totalPrice) {
+        this.orderId = orderId;
+        this.customerName = customerName;
+        this.totalPrice = totalPrice;
+    }
+
+    // Getters
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderId='" + orderId + '\'' +
+                ", customerName='" + customerName + '\'' +
+                ", totalPrice=" + totalPrice +
+                '}';
+    }
+}
+3. Implementation:
+Bubble Sort Implementation:
+
+java
+
+public class SortingAlgorithms {
+    // Bubble Sort
+    public static void bubbleSort(Order[] orders) {
+        int n = orders.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (orders[j].getTotalPrice() > orders[j + 1].getTotalPrice()) {
+                    // Swap orders[j] and orders[j + 1]
+                    Order temp = orders[j];
+                    orders[j] = orders[j + 1];
+                    orders[j + 1] = temp;
+                }
+            }
+        }
+    }
+}
+Quick Sort Implementation:
+
+java
+
+public class SortingAlgorithms {
+    // Quick Sort
+    public static void quickSort(Order[] orders, int low, int high) {
+        if (low < high) {
+            int pi = partition(orders, low, high);
+            quickSort(orders, low, pi - 1);
+            quickSort(orders, pi + 1, high);
+        }
+    }
+
+    private static int partition(Order[] orders, int low, int high) {
+        double pivot = orders[high].getTotalPrice();
+        int i = (low - 1);
+        for (int j = low; j < high; j++) {
+            if (orders[j].getTotalPrice() <= pivot) {
+                i++;
+                // Swap orders[i] and orders[j]
+                Order temp = orders[i];
+                orders[i] = orders[j];
+                orders[j] = temp;
+            }
+        }
+        // Swap orders[i + 1] and orders[high] (or pivot)
+        Order temp = orders[i + 1];
+        orders[i + 1] = orders[high];
+        orders[high] = temp;
+
+        return i + 1;
+    }
+}
+4. Analysis:
+Time Complexity Comparison:
+
+Bubble Sort:
+
+Best Case: O(n) – When the array is already sorted (with optimization to stop early if no swaps are made).
+Average Case: O(n^2) – For random data.
+Worst Case: O(n^2) – When the array is in reverse order.
+Quick Sort:
+
+Best Case: O(n log n) – With a good pivot choice that divides the array into equal halves.
+Average Case: O(n log n) – For random data.
+Worst Case: O(n^2) – When the pivot is the smallest or largest element.
+Why Quick Sort is Preferred Over Bubble Sort:
+
+Efficiency: Quick Sort is generally much faster than Bubble Sort for large datasets due to its average time complexity of O(n log n) compared to Bubble Sort’s O(n^2).
+Scalability: Quick Sort can handle larger datasets efficiently, making it suitable for practical applications in real-world scenarios.
+Divide and Conquer: Quick Sort leverages a divide-and-conquer approach that reduces the problem size more rapidly compared to the straightforward comparison approach of Bubble Sort.

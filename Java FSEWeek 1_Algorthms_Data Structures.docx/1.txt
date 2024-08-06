@@ -1,0 +1,162 @@
+Inventory Management System: Exercise 1
+1. Understand the Problem:
+Why Data Structures and Algorithms are Essential:
+Efficient data storage and retrieval are crucial in handling large inventories due to several reasons:
+
+Scalability: An inventory management system needs to handle potentially large numbers of products, so efficient data structures are necessary to ensure that the system remains responsive as the number of products grows.
+Performance: Fast retrieval and update operations are essential for effective inventory management, especially when dealing with frequent transactions and queries.
+Accuracy: Proper data structures help in maintaining the integrity and consistency of inventory data, avoiding issues such as data loss or duplication.
+Types of Data Structures Suitable:
+
+ArrayList: Provides dynamic resizing and allows indexed access. It is suitable for cases where the order of elements matters and random access is required. However, it does not provide efficient lookup, insertion, or deletion by key.
+HashMap: Provides efficient key-based access and is suitable for scenarios where quick retrieval, insertion, and deletion of products are needed. It uses hash codes to index entries, allowing average O(1) time complexity for these operations.
+2. Setup:
+Create a new project in your preferred programming environment for the inventory management system. For demonstration purposes, we will use Java.
+
+3. Implementation:
+Define the Product Class:
+
+java
+
+public class Product {
+    private String productId;
+    private String productName;
+    private int quantity;
+    private double price;
+
+    // Constructor
+    public Product(String productId, String productName, int quantity, double price) {
+        this.productId = productId;
+        this.productName = productName;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
+    // Getters and Setters
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "productId='" + productId + '\'' +
+                ", productName='" + productName + '\'' +
+                ", quantity=" + quantity +
+                ", price=" + price +
+                '}';
+    }
+}
+Choose an Appropriate Data Structure:
+
+We'll use HashMap to store products, with the product ID as the key for fast lookup.
+
+Implement Methods for Inventory Management:
+
+java
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class InventoryManagementSystem {
+    private Map<String, Product> inventory;
+
+    // Constructor
+    public InventoryManagementSystem() {
+        inventory = new HashMap<>();
+    }
+
+    // Add a new product
+    public void addProduct(Product product) {
+        inventory.put(product.getProductId(), product);
+    }
+
+    // Update an existing product
+    public void updateProduct(String productId, int quantity, double price) {
+        Product product = inventory.get(productId);
+        if (product != null) {
+            product.setQuantity(quantity);
+            product.setPrice(price);
+        }
+    }
+
+    // Delete a product
+    public void deleteProduct(String productId) {
+        inventory.remove(productId);
+    }
+
+    // Retrieve a product
+    public Product getProduct(String productId) {
+        return inventory.get(productId);
+    }
+
+    // Display all products
+    public void displayProducts() {
+        for (Product product : inventory.values()) {
+            System.out.println(product);
+        }
+    }
+
+    public static void main(String[] args) {
+        InventoryManagementSystem ims = new InventoryManagementSystem();
+
+        // Add products
+        ims.addProduct(new Product("1", "Laptop", 10, 999.99));
+        ims.addProduct(new Product("2", "Smartphone", 20, 499.99));
+
+        // Display all products
+        ims.displayProducts();
+
+        // Update a product
+        ims.updateProduct("1", 8, 949.99);
+
+        // Display updated product
+        System.out.println("Updated Product: " + ims.getProduct("1"));
+
+        // Delete a product
+        ims.deleteProduct("2");
+
+        // Display all products after deletion
+        ims.displayProducts();
+    }
+}
+4. Analysis:
+Time Complexity:
+
+Add Operation (addProduct): O(1) on average. HashMap operations like put are O(1) on average due to hashing.
+Update Operation (updateProduct): O(1) on average. Retrieval of the product by key is O(1), and updating the fields is O(1).
+Delete Operation (deleteProduct): O(1) on average. Removal from HashMap is O(1) on average.
+Retrieve Operation (getProduct): O(1) on average. HashMap retrieval is O(1).
+Optimization Discussion:
+
+Load Factor and Capacity: To maintain performance, adjust the load factor and initial capacity of the HashMap based on expected size.
+Collision Handling: Implementing good hash functions and handling collisions effectively ensures that the average time complexity remains close to O(1).
+Memory Management: Be mindful of memory usage as HashMaps consume more memory due to their underlying data structures. In cases of very large data sets, consider optimizing memory usage or exploring other data structures like B-Trees for specific scenarios.

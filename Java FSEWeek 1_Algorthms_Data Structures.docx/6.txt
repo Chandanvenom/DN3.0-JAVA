@@ -1,0 +1,154 @@
+Library Management System: Exercise 6
+1. Understand Search Algorithms:
+Linear Search:
+
+Description: Linear search, also known as sequential search, is a simple algorithm that checks each element in a list one by one until the desired element is found or the end of the list is reached.
+Time Complexity:
+Best Case: O(1) – If the target element is the first one in the list.
+Average Case: O(n) – On average, the algorithm needs to check half of the list elements.
+Worst Case: O(n) – The target element is at the end of the list or not in the list at all.
+Binary Search:
+
+Description: Binary search is a more efficient search algorithm that works on sorted lists. It repeatedly divides the search interval in half. If the target value is less than the middle element, the search continues in the lower half; otherwise, it continues in the upper half.
+Time Complexity:
+Best Case: O(1) – If the target element is at the middle of the list.
+Average Case: O(log n) – On average, the search interval is halved with each comparison.
+Worst Case: O(log n) – The search interval is reduced to one element after multiple divisions.
+2. Setup:
+Create a Book class with attributes such as bookId, title, and author.
+
+Book Class Definition:
+
+java
+
+public class Book {
+    private String bookId;
+    private String title;
+    private String author;
+
+    // Constructor
+    public Book(String bookId, String title, String author) {
+        this.bookId = bookId;
+        this.title = title;
+        this.author = author;
+    }
+
+    // Getters
+    public String getBookId() {
+        return bookId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "bookId='" + bookId + '\'' +
+                ", title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                '}';
+    }
+}
+3. Implementation:
+Linear Search Implementation:
+
+java
+
+import java.util.List;
+
+public class LibraryManagementSystem {
+
+    // Linear search to find books by title
+    public static Book linearSearchByTitle(List<Book> books, String title) {
+        for (Book book : books) {
+            if (book.getTitle().equalsIgnoreCase(title)) {
+                return book;
+            }
+        }
+        return null; // Not found
+    }
+}
+Binary Search Implementation:
+
+java
+Copy code
+import java.util.Arrays;
+import java.util.List;
+
+public class LibraryManagementSystem {
+
+    // Binary search to find books by title (assuming the list is sorted by title)
+    public static Book binarySearchByTitle(List<Book> books, String title) {
+        int low = 0;
+        int high = books.size() - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            Book midBook = books.get(mid);
+
+            int cmp = midBook.getTitle().compareToIgnoreCase(title);
+            if (cmp == 0) {
+                return midBook;
+            } else if (cmp < 0) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return null; // Not found
+    }
+
+    public static void main(String[] args) {
+        // Example usage
+        List<Book> books = Arrays.asList(
+            new Book("1", "The Catcher in the Rye", "J.D. Salinger"),
+            new Book("2", "To Kill a Mockingbird", "Harper Lee"),
+            new Book("3", "1984", "George Orwell")
+        );
+
+        // Linear search example
+        System.out.println("Linear Search:");
+        Book foundBook = linearSearchByTitle(books, "1984");
+        System.out.println(foundBook != null ? foundBook : "Book not found.");
+
+        // Binary search example
+        // Ensure the list is sorted by title
+        books.sort((b1, b2) -> b1.getTitle().compareToIgnoreCase(b2.getTitle()));
+        System.out.println("Binary Search:");
+        foundBook = binarySearchByTitle(books, "To Kill a Mockingbird");
+        System.out.println(foundBook != null ? foundBook : "Book not found.");
+    }
+}
+4. Analysis:
+Time Complexity Comparison:
+
+Linear Search:
+
+Best Case: O(1) – If the target element is found immediately.
+Average Case: O(n) – On average, half of the elements are checked.
+Worst Case: O(n) – The target element is at the end of the list or not present.
+Binary Search:
+
+Best Case: O(1) – If the target element is at the middle.
+Average Case: O(log n) – With each comparison, the search space is halved.
+Worst Case: O(log n) – The search space is reduced to one element after multiple divisions.
+When to Use Each Algorithm:
+
+Linear Search:
+
+Use Case: Suitable for small lists or unsorted data where sorting is not feasible or practical. It is simple to implement and does not require preconditions on the data.
+Limitations: Inefficient for large lists as it may require checking every element.
+Binary Search:
+
+Use Case: Ideal for large, sorted lists where quick search times are crucial. It is efficient and scales well with large datasets.
+Limitations: Requires the data to be sorted before searching. Sorting adds additional overhead if the data is not already sorted.
+Summary:
+
+Linear Search is straightforward and works on unsorted or small datasets but can be slow for larger datasets.
+Binary Search is highly efficient for large, sorted datasets due to its logarithmic time complexity but requires sorting.

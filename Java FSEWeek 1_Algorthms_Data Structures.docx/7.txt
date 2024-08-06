@@ -1,0 +1,106 @@
+Financial Forecasting: Exercise 7
+1. Understand Recursive Algorithms:
+Concept of Recursion:
+
+Definition: Recursion is a programming technique where a function calls itself directly or indirectly to solve a problem. A recursive algorithm typically breaks the problem into smaller, more manageable subproblems, solving each recursively.
+Base Case: The base case is the condition under which the recursive function terminates. It prevents infinite recursion and ensures that the function eventually stops calling itself.
+Recursive Case: The recursive case divides the problem into smaller instances, solving each recursively. It must approach the base case.
+Advantages:
+
+Simplification: Recursive solutions can simplify the code and make it more readable, especially for problems naturally defined in terms of smaller subproblems (e.g., tree traversal, divide and conquer).
+Elegance: Some problems, like those involving combinations or permutations, are easier to express and implement recursively.
+Disadvantages:
+
+Overhead: Each recursive call adds a new frame to the call stack, which can lead to overhead and stack overflow issues if the recursion is too deep.
+Performance: Recursive solutions may be less efficient due to redundant computations and repeated function calls.
+2. Setup:
+To forecast future values based on past data, we can use a recursive approach to calculate the future value based on a given growth rate. For example, if you have a simple model where the future value is based on a constant growth rate, you can use recursion to calculate it.
+
+3. Implementation:
+Recursive Algorithm for Financial Forecasting:
+
+Let's assume a simple model where the future value is calculated based on a starting value, a growth rate, and a number of periods. The formula for the future value in each period is:
+
+Future Value
+=
+Current Value
+×
+(
+1
++
+Growth Rate
+)
+Future Value=Current Value×(1+Growth Rate)
+
+Here's how you can implement this recursively:
+
+java
+Copy code
+public class FinancialForecasting {
+
+    // Recursive method to calculate future value
+    public static double calculateFutureValue(double currentValue, double growthRate, int periods) {
+        if (periods <= 0) {
+            return currentValue; // Base case: no periods left
+        }
+        return calculateFutureValue(currentValue * (1 + growthRate), growthRate, periods - 1);
+    }
+
+    public static void main(String[] args) {
+        double currentValue = 1000.0; // Starting amount
+        double growthRate = 0.05; // 5% growth rate
+        int periods = 10; // Number of periods (years)
+
+        double futureValue = calculateFutureValue(currentValue, growthRate, periods);
+        System.out.printf("The future value after %d periods is: %.2f\n", periods, futureValue);
+    }
+}
+4. Analysis:
+Time Complexity:
+
+Time Complexity: O(n) – Each recursive call performs a constant amount of work and there are 
+𝑛
+n recursive calls, where 
+𝑛
+n is the number of periods. Thus, the time complexity is linear.
+Space Complexity: O(n) – The space complexity is linear due to the stack space required for 
+𝑛
+n recursive calls.
+Optimization Strategies:
+
+Memoization:
+
+Description: Store the results of subproblems to avoid redundant computations. This technique is particularly useful if the recursive function solves overlapping subproblems.
+Implementation: Use a cache (e.g., a hash map) to store previously computed results and retrieve them instead of recomputing.
+Iterative Approach:
+
+Description: Convert the recursive algorithm to an iterative one. This avoids the overhead of recursive calls and can be more efficient in terms of space.
+Implementation: Use a loop to compute the future value iteratively.
+Iterative Version:
+
+java
+Copy code
+public class FinancialForecasting {
+
+    // Iterative method to calculate future value
+    public static double calculateFutureValue(double currentValue, double growthRate, int periods) {
+        double futureValue = currentValue;
+        for (int i = 0; i < periods; i++) {
+            futureValue *= (1 + growthRate);
+        }
+        return futureValue;
+    }
+
+    public static void main(String[] args) {
+        double currentValue = 1000.0; // Starting amount
+        double growthRate = 0.05; // 5% growth rate
+        int periods = 10; // Number of periods (years)
+
+        double futureValue = calculateFutureValue(currentValue, growthRate, periods);
+        System.out.printf("The future value after %d periods is: %.2f\n", periods, futureValue);
+    }
+}
+Summary:
+
+Recursive Approach: Provides a clear and elegant way to express the problem but can be inefficient due to overhead and potential stack overflow issues for large inputs.
+Iterative Approach: Avoids recursion overhead and is generally more efficient in terms of space and performance for problems with simple iterative solutions.
