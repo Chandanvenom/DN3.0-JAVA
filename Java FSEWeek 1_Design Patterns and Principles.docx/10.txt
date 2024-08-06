@@ -1,0 +1,131 @@
+Step 1: Create a New Java Project
+First, create a new Java project named MVCPatternExample in your preferred IDE.
+
+Step 2: Define Model Class
+Create a class Student with attributes like name, id, and grade.
+
+java
+
+public class Student {
+    private String name;
+    private String id;
+    private String grade;
+
+    public Student(String name, String id, String grade) {
+        this.name = name;
+        this.id = id;
+        this.grade = grade;
+    }
+
+    // Getters and Setters
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+}
+Step 3: Define View Class
+Create a class StudentView with a method displayStudentDetails().
+
+java
+
+public class StudentView {
+    public void displayStudentDetails(String studentName, String studentId, String studentGrade) {
+        System.out.println("Student Details:");
+        System.out.println("Name: " + studentName);
+        System.out.println("ID: " + studentId);
+        System.out.println("Grade: " + studentGrade);
+    }
+}
+Step 4: Define Controller Class
+Create a class StudentController that handles the communication between the model and the view.
+
+java
+
+public class StudentController {
+    private Student model;
+    private StudentView view;
+
+    public StudentController(Student model, StudentView view) {
+        this.model = model;
+        this.view = view;
+    }
+
+    public void setStudentName(String name) {
+        model.setName(name);
+    }
+
+    public String getStudentName() {
+        return model.getName();
+    }
+
+    public void setStudentId(String id) {
+        model.setId(id);
+    }
+
+    public String getStudentId() {
+        return model.getId();
+    }
+
+    public void setStudentGrade(String grade) {
+        model.setGrade(grade);
+    }
+
+    public String getStudentGrade() {
+        return model.getGrade();
+    }
+
+    public void updateView() {
+        view.displayStudentDetails(model.getName(), model.getId(), model.getGrade());
+    }
+}
+Step 5: Test the MVC Implementation
+Create a main class to demonstrate creating a Student, updating its details using StudentController, and displaying them using StudentView.
+
+java
+
+public class MVCPatternTest {
+    public static void main(String[] args) {
+        // Create the model
+        Student student = new Student("John Doe", "123", "A");
+
+        // Create the view
+        StudentView view = new StudentView();
+
+        // Create the controller
+        StudentController controller = new StudentController(student, view);
+
+        // Update view
+        controller.updateView();
+
+        // Update model data
+        controller.setStudentName("Jane Doe");
+        controller.setStudentGrade("B");
+
+        // Update view again
+        controller.updateView();
+    }
+}
+Explanation
+Model Class (Student): Represents the data of the application and contains attributes name, id, and grade with their respective getters and setters.
+View Class (StudentView): Responsible for displaying the student details and contains a method displayStudentDetails() that takes the student attributes as parameters.
+Controller Class (StudentController): Acts as an intermediary between the Student model and StudentView. It updates the model data and instructs the view to display the updated data.
+Main Class (MVCPatternTest): Demonstrates the creation of a Student, updating its details using StudentController, and displaying them using StudentView

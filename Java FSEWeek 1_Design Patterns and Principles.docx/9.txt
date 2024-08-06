@@ -1,0 +1,107 @@
+Step 1: Create a New Java Project
+First, create a new Java project named CommandPatternExample in your preferred IDE.
+
+Step 2: Define Command Interface
+Create an interface named Command with a method execute().
+
+java
+
+public interface Command {
+    void execute();
+}
+Step 3: Implement Concrete Commands
+Create classes LightOnCommand and LightOffCommand that implement Command.
+
+LightOnCommand
+java
+
+public class LightOnCommand implements Command {
+    private Light light;
+
+    public LightOnCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOn();
+    }
+}
+LightOffCommand
+java
+
+public class LightOffCommand implements Command {
+    private Light light;
+
+    public LightOffCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOff();
+    }
+}
+Step 4: Implement Invoker Class
+Create a class RemoteControl that holds a reference to a Command and a method to execute the command.
+
+java
+
+public class RemoteControl {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void pressButton() {
+        if (command != null) {
+            command.execute();
+        } else {
+            System.out.println("No command set.");
+        }
+    }
+}
+Step 5: Implement Receiver Class
+Create a class Light with methods to turn on and off.
+
+java
+
+public class Light {
+    public void turnOn() {
+        System.out.println("The light is on.");
+    }
+
+    public void turnOff() {
+        System.out.println("The light is off.");
+    }
+}
+Step 6: Test the Command Implementation
+Create a test class to demonstrate issuing commands using the RemoteControl.
+
+java
+
+public class CommandPatternTest {
+    public static void main(String[] args) {
+        Light livingRoomLight = new Light();
+        
+        Command lightOn = new LightOnCommand(livingRoomLight);
+        Command lightOff = new LightOffCommand(livingRoomLight);
+        
+        RemoteControl remote = new RemoteControl();
+        
+        // Turn the light on
+        remote.setCommand(lightOn);
+        remote.pressButton();
+        
+        // Turn the light off
+        remote.setCommand(lightOff);
+        remote.pressButton();
+    }
+}
+Explanation
+Command Interface (Command): Defines the standard method execute().
+Concrete Commands (LightOnCommand, LightOffCommand): Implement Command and define specific actions to turn the light on and off.
+Invoker Class (RemoteControl): Holds a reference to a Command and has a method pressButton() to execute the command.
+Receiver Class (Light): Has methods to turn on and off the light.
+Test Class (CommandPatternTest): Demonstrates how to set and execute commands using the RemoteControl.

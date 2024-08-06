@@ -1,0 +1,129 @@
+Create a class named Computer with attributes like CPU, RAM, and Storage.
+
+java
+
+public class Computer {
+    // Attributes
+    private String CPU;
+    private String RAM;
+    private String storage;
+    private boolean hasGraphicsCard;
+    private boolean hasBluetooth;
+
+    // Private constructor
+    private Computer(Builder builder) {
+        this.CPU = builder.CPU;
+        this.RAM = builder.RAM;
+        this.storage = builder.storage;
+        this.hasGraphicsCard = builder.hasGraphicsCard;
+        this.hasBluetooth = builder.hasBluetooth;
+    }
+
+    // Getters
+    public String getCPU() {
+        return CPU;
+    }
+
+    public String getRAM() {
+        return RAM;
+    }
+
+    public String getStorage() {
+        return storage;
+    }
+
+    public boolean hasGraphicsCard() {
+        return hasGraphicsCard;
+    }
+
+    public boolean hasBluetooth() {
+        return hasBluetooth;
+    }
+
+    // Static nested Builder class
+    public static class Builder {
+        private String CPU;
+        private String RAM;
+        private String storage;
+        private boolean hasGraphicsCard;
+        private boolean hasBluetooth;
+
+        // Builder methods for setting attributes
+        public Builder setCPU(String CPU) {
+            this.CPU = CPU;
+            return this;
+        }
+
+        public Builder setRAM(String RAM) {
+            this.RAM = RAM;
+            return this;
+        }
+
+        public Builder setStorage(String storage) {
+            this.storage = storage;
+            return this;
+        }
+
+        public Builder setGraphicsCard(boolean hasGraphicsCard) {
+            this.hasGraphicsCard = hasGraphicsCard;
+            return this;
+        }
+
+        public Builder setBluetooth(boolean hasBluetooth) {
+            this.hasBluetooth = hasBluetooth;
+            return this;
+        }
+
+        // Build method to create Computer instance
+        public Computer build() {
+            return new Computer(this);
+        }
+    }
+}
+Step 3: Implement the Builder Class
+The Builder class is a static nested class inside the Computer class. It has methods to set each attribute and a build() method that returns an instance of Computer.
+
+Step 4: Test the Builder Implementation
+Create a test class to demonstrate the creation of different configurations of Computer using the Builder pattern.
+
+java
+
+public class BuilderPatternTest {
+    public static void main(String[] args) {
+        // Creating a Computer instance using the Builder pattern
+        Computer gamingPC = new Computer.Builder()
+                .setCPU("Intel Core i9")
+                .setRAM("32GB")
+                .setStorage("1TB SSD")
+                .setGraphicsCard(true)
+                .setBluetooth(true)
+                .build();
+
+        Computer officePC = new Computer.Builder()
+                .setCPU("Intel Core i5")
+                .setRAM("16GB")
+                .setStorage("512GB SSD")
+                .setGraphicsCard(false)
+                .setBluetooth(true)
+                .build();
+
+        // Displaying the configurations
+        System.out.println("Gaming PC Configuration:");
+        System.out.println("CPU: " + gamingPC.getCPU());
+        System.out.println("RAM: " + gamingPC.getRAM());
+        System.out.println("Storage: " + gamingPC.getStorage());
+        System.out.println("Graphics Card: " + gamingPC.hasGraphicsCard());
+        System.out.println("Bluetooth: " + gamingPC.hasBluetooth());
+
+        System.out.println("\nOffice PC Configuration:");
+        System.out.println("CPU: " + officePC.getCPU());
+        System.out.println("RAM: " + officePC.getRAM());
+        System.out.println("Storage: " + officePC.getStorage());
+        System.out.println("Graphics Card: " + officePC.hasGraphicsCard());
+        System.out.println("Bluetooth: " + officePC.hasBluetooth());
+    }
+}
+Explanation
+Product Class (Computer): Contains private attributes and a private constructor that accepts a Builder instance.
+Builder Class: A static nested class with methods to set each attribute and a build() method to create a Computer instance.
+Test Class: Demonstrates how to use the Builder class to create different configurations of the Computer object.

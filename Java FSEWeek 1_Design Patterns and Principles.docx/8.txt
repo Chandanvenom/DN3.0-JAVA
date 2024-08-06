@@ -1,0 +1,93 @@
+Step 1: Create a New Java Project
+First, create a new Java project named StrategyPatternExample in your preferred IDE.
+
+Step 2: Define Strategy Interface
+Create an interface named PaymentStrategy with a method pay().
+
+java
+
+public interface PaymentStrategy {
+    void pay(double amount);
+}
+Step 3: Implement Concrete Strategies
+Create classes CreditCardPayment and PayPalPayment that implement PaymentStrategy.
+
+CreditCardPayment
+java
+
+public class CreditCardPayment implements PaymentStrategy {
+    private String cardNumber;
+    private String cardHolderName;
+
+    public CreditCardPayment(String cardNumber, String cardHolderName) {
+        this.cardNumber = cardNumber;
+        this.cardHolderName = cardHolderName;
+    }
+
+    @Override
+    public void pay(double amount) {
+        System.out.println("Paid " + amount + " using Credit Card.");
+        System.out.println("Card Number: " + cardNumber);
+        System.out.println("Card Holder Name: " + cardHolderName);
+    }
+}
+PayPalPayment
+java
+
+public class PayPalPayment implements PaymentStrategy {
+    private String email;
+
+    public PayPalPayment(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public void pay(double amount) {
+        System.out.println("Paid " + amount + " using PayPal.");
+        System.out.println("Email: " + email);
+    }
+}
+Step 4: Implement Context Class
+Create a class PaymentContext that holds a reference to PaymentStrategy and a method to execute the strategy.
+
+java
+
+public class PaymentContext {
+    private PaymentStrategy paymentStrategy;
+
+    public void setPaymentStrategy(PaymentStrategy paymentStrategy) {
+        this.paymentStrategy = paymentStrategy;
+    }
+
+    public void pay(double amount) {
+        if (paymentStrategy == null) {
+            System.out.println("Payment strategy not set.");
+        } else {
+            paymentStrategy.pay(amount);
+        }
+    }
+}
+Step 5: Test the Strategy Implementation
+Create a test class to demonstrate selecting and using different payment strategies.
+
+j
+public class StrategyPatternTest {
+    public static void main(String[] args) {
+        PaymentContext paymentContext = new PaymentContext();
+
+        // Using Credit Card payment strategy
+        PaymentStrategy creditCardPayment = new CreditCardPayment("1234-5678-9876-5432", "John Doe");
+        paymentContext.setPaymentStrategy(creditCardPayment);
+        paymentContext.pay(150.0);
+
+        // Using PayPal payment strategy
+        PaymentStrategy payPalPayment = new PayPalPayment("john.doe@example.com");
+        paymentContext.setPaymentStrategy(payPalPayment);
+        paymentContext.pay(200.0);
+    }
+}
+Explanation
+Strategy Interface (PaymentStrategy): Defines the standard method pay().
+Concrete Strategies (CreditCardPayment, PayPalPayment): Implement PaymentStrategy and define specific payment methods.
+Context Class (PaymentContext): Holds a reference to PaymentStrategy and has a method pay() to execute the strategy.
+Test Class (StrategyPatternTest): Demonstrates how to select and use different payment strategies at runtime.

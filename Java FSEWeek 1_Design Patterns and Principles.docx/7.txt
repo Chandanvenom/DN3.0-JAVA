@@ -1,0 +1,124 @@
+Step 1: Create a New Java Project
+First, create a new Java project named ObserverPatternExample in your preferred IDE.
+
+Step 2: Define Subject Interface
+Create an interface named Stock with methods to register, deregister, and notify observers.
+
+java
+
+import java.util.ArrayList;
+import java.util.List;
+
+public interface Stock {
+    void registerObserver(Observer observer);
+    void deregisterObserver(Observer observer);
+    void notifyObservers();
+}
+Step 3: Implement Concrete Subject
+Create a class StockMarket that implements Stock and maintains a list of observers.
+
+java
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class StockMarket implements Stock {
+    private List<Observer> observers;
+    private double stockPrice;
+
+    public StockMarket() {
+        observers = new ArrayList<>();
+    }
+
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void deregisterObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(stockPrice);
+        }
+    }
+
+    public void setStockPrice(double stockPrice) {
+        this.stockPrice = stockPrice;
+        notifyObservers();
+    }
+}
+Step 4: Define Observer Interface
+Create an interface named Observer with a method update().
+
+java
+
+public interface Observer {
+    void update(double stockPrice);
+}
+Step 5: Implement Concrete Observers
+Create classes MobileApp and WebApp that implement Observer.
+
+MobileApp
+java
+Copy code
+public class MobileApp implements Observer {
+    private String name;
+
+    public MobileApp(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void update(double stockPrice) {
+        System.out.println(name + " received stock price update: " + stockPrice);
+    }
+}
+WebApp
+java
+
+public class WebApp implements Observer {
+    private String name;
+
+    public WebApp(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void update(double stockPrice) {
+        System.out.println(name + " received stock price update: " + stockPrice);
+    }
+}
+Step 6: Test the Observer Implementation
+Create a test class to demonstrate the registration and notification of observers.
+
+java
+
+public class ObserverPatternTest {
+    public static void main(String[] args) {
+        StockMarket stockMarket = new StockMarket();
+
+        Observer mobileApp = new MobileApp("MobileApp1");
+        Observer webApp = new WebApp("WebApp1");
+
+        stockMarket.registerObserver(mobileApp);
+        stockMarket.registerObserver(webApp);
+
+        stockMarket.setStockPrice(100.0);
+        stockMarket.setStockPrice(105.5);
+
+        stockMarket.deregisterObserver(mobileApp);
+
+        stockMarket.setStockPrice(98.0);
+    }
+}
+Explanation
+Subject Interface (Stock): Defines methods to register, deregister, and notify observers.
+Concrete Subject (StockMarket): Implements Stock, maintains a list of observers, and notifies them of stock price changes.
+Observer Interface (Observer): Defines the update() method to receive updates.
+Concrete Observers (MobileApp, WebApp): Implement Observer and define how to handle updates.
+Test Class (ObserverPatternTest): Demonstrates the registration and notification of observers. It shows how the observers receive updates when the stock price changes and how they stop receiving updates after being deregistered

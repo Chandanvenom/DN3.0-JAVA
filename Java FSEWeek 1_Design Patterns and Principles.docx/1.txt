@@ -1,0 +1,125 @@
+Implementing the Singleton Pattern: Exercise 1
+The Singleton Pattern ensures that a class has only one instance and provides a global point of access to that instance. This is particularly useful for logging utilities where consistent and centralized logging is required.
+
+1. Create a New Java Project:
+Project Name: SingletonPatternExample
+2. Define a Singleton Class:
+Logger Class:
+
+java
+
+public class Logger {
+    // Step 1: Create a private static instance of the class
+    private static Logger instance;
+    
+    // Step 2: Make the constructor private to prevent instantiation
+    private Logger() {
+        // Private constructor to prevent instantiation from other classes
+    }
+    
+    // Step 3: Provide a public static method to get the instance
+    public static Logger getInstance() {
+        if (instance == null) {
+            synchronized (Logger.class) { // Thread safety for concurrent access
+                if (instance == null) {
+                    instance = new Logger();
+                }
+            }
+        }
+        return instance;
+    }
+    
+    // Example logging method
+    public void log(String message) {
+        System.out.println("Log: " + message);
+    }
+}
+Explanation:
+
+Private Static Instance: The instance variable holds the single instance of the class.
+Private Constructor: The constructor is private to prevent external instantiation.
+Public Static Method: getInstance() provides a global access point to the instance and ensures thread safety with double-checked locking.
+3. Test the Singleton Implementation:
+Create a test class to verify that only one instance of the Logger class is created and used across the application.
+
+TestLogger Class:
+
+java
+
+public class TestLogger {
+    public static void main(String[] args) {
+        // Obtain the first instance of Logger
+        Logger logger1 = Logger.getInstance();
+        logger1.log("This is the first log message.");
+        
+        // Obtain the second instance of Logger
+        Logger logger2 = Logger.getInstance();
+        logger2.log("This is the second log message.");
+        
+        // Check if both instances are the same
+        if (logger1 == logger2) {
+            System.out.println("logger1 and logger2 are the same instance.");
+        } else {
+            System.out.println("logger1 and logger2 are different instances.");
+        }
+    }
+}
+Explanation:
+
+Testing the Singleton: The TestLogger class demonstrates that logger1 and logger2 are the same instance by comparing them using ==.
+Log Messages: Both instances should log messages consistently, indicating that they are indeed the same instance.
+Execution Output:
+
+When you run the TestLogger class, you should see:
+
+vbnet
+Copy code
+Log: This is the first log message.
+Log: This is the second log message.
+logger1 and logger2 are the same instance.
+4. Complete Code Summary:
+Logger.java:
+
+java
+
+public class Logger {
+    private static Logger instance;
+    
+    private Logger() {
+        // Private constructor
+    }
+    
+    public static Logger getInstance() {
+        if (instance == null) {
+            synchronized (Logger.class) {
+                if (instance == null) {
+                    instance = new Logger();
+                }
+            }
+        }
+        return instance;
+    }
+    
+    public void log(String message) {
+        System.out.println("Log: " + message);
+    }
+}
+TestLogger.java:
+
+java
+
+public class TestLogger {
+    public static void main(String[] args) {
+        Logger logger1 = Logger.getInstance();
+        logger1.log("This is the first log message.");
+        
+        Logger logger2 = Logger.getInstance();
+        logger2.log("This is the second log message.");
+        
+        if (logger1 == logger2) {
+            System.out.println("logger1 and logger2 are the same instance.");
+        } else {
+            System.out.println("logger1 and logger2 are different instances.");
+        }
+    }
+}

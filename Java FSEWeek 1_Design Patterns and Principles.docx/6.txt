@@ -1,0 +1,82 @@
+Step 1: Create a New Java Project
+First, create a new Java project named ProxyPatternExample in your preferred IDE.
+
+Step 2: Define Subject Interface
+Create an interface named Image with a method display().
+
+java
+
+public interface Image {
+    void display();
+}
+Step 3: Implement Real Subject Class
+Create a class RealImage that implements Image and simulates loading an image from a remote server.
+
+java
+
+public class RealImage implements Image {
+    private String filename;
+
+    public RealImage(String filename) {
+        this.filename = filename;
+        loadImageFromDisk();
+    }
+
+    private void loadImageFromDisk() {
+        System.out.println("Loading " + filename + " from remote server...");
+    }
+
+    @Override
+    public void display() {
+        System.out.println("Displaying " + filename);
+    }
+}
+Step 4: Implement Proxy Class
+Create a class ProxyImage that implements Image and holds a reference to RealImage. Implement lazy initialization and caching in ProxyImage.
+
+java
+
+public class ProxyImage implements Image {
+    private RealImage realImage;
+    private String filename;
+
+    public ProxyImage(String filename) {
+        this.filename = filename;
+    }
+
+    @Override
+    public void display() {
+        if (realImage == null) {
+            realImage = new RealImage(filename);
+        }
+        realImage.display();
+    }
+}
+Step 5: Test the Proxy Implementation
+Create a test class to demonstrate the use of ProxyImage to load and display images.
+
+java
+
+public class ProxyPatternTest {
+    public static void main(String[] args) {
+        Image image1 = new ProxyImage("photo1.jpg");
+        Image image2 = new ProxyImage("photo2.jpg");
+
+        // The image will be loaded from the server and displayed
+        image1.display();
+        
+        // The image will be displayed without loading from the server again
+        image1.display();
+
+        // The second image will be loaded from the server and displayed
+        image2.display();
+        
+        // The second image will be displayed without loading from the server again
+        image2.display();
+    }
+}
+Explanation
+Subject Interface (Image): Defines the standard method display().
+Real Subject Class (RealImage): Implements Image and simulates loading an image from a remote server.
+Proxy Class (ProxyImage): Implements Image and holds a reference to RealImage. It implements lazy initialization (loading the image only when display() is called for the first time) and caching (reusing the loaded image for subsequent display() calls).
+Test Class (ProxyPatternTest): Demonstrates how to use the ProxyImage to load and display images. It shows the benefits of lazy initialization and caching by loading the image only once from the remote server.
